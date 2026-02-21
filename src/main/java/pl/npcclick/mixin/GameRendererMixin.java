@@ -18,7 +18,7 @@ import java.util.Optional;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Inject(method = "findCrosshairTarget", at = @At("RETURN"), cancellable = true)
-    private void npcclick$findCrosshairTarget(Entity camera, double maxDistance, float tickDelta,
+    private void npcclick$findCrosshairTarget(Entity camera, double maxDistance, double someDouble, float tickDelta,
                                                CallbackInfoReturnable<HitResult> cir) {
         if (!NpcClickMod.isEnabled()) return;
         HitResult current = cir.getReturnValue();
