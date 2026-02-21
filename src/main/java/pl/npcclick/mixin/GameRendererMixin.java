@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
-    @Inject(method = "findCrosshairTarget", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "findCrosshairTarget", at = @At("HEAD"), cancellable = true)
     private void npcclick$findCrosshairTarget(Entity camera, double maxDistance, double someDouble, float tickDelta,
                                                CallbackInfoReturnable<HitResult> cir) {
         if (!NpcClickMod.isEnabled()) return;
@@ -32,7 +32,6 @@ public class GameRendererMixin {
 
         for (Entity candidate : world.getOtherEntities(camera, searchBox)) {
             if (candidate == camera) continue;
-            // sprawdź czy nazwa zawiera "kliknij" (ignorując wielkość liter)
             String name = candidate.getName().getString();
             if (!name.toLowerCase().contains("kliknij")) continue;
 
@@ -49,6 +48,7 @@ public class GameRendererMixin {
 
         if (bestEntity != null) {
             cir.setReturnValue(new EntityHitResult(bestEntity, bestEntity.getBoundingBox().getCenter()));
+            cir.cancel(); // przerywa vanilla raycast, nasz wynik wygrywa
         }
     }
 }
