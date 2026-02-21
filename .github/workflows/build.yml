@@ -8,17 +8,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Setup Gradle
+
+      - name: Install Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.8'
+
       - name: Build mod
-        run: chmod +x gradlew && ./gradlew build
+        run: gradle build
+
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
           name: npcclick-mod
           path: build/libs/npcclick-*.jar
+          if-no-files-found: error
