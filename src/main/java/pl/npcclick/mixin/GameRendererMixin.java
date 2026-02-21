@@ -2,7 +2,6 @@ package pl.npcclick.mixin;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
@@ -32,8 +31,11 @@ public class GameRendererMixin {
         double bestDist = Double.MAX_VALUE;
 
         for (Entity candidate : world.getOtherEntities(camera, searchBox)) {
-            if (candidate instanceof PlayerEntity) continue;
-            if (!(candidate instanceof LivingEntity)) continue;
+            if (candidate == camera) continue;
+            // sprawdź czy nazwa zawiera "kliknij" (ignorując wielkość liter)
+            String name = candidate.getName().getString();
+            if (!name.toLowerCase().contains("kliknij")) continue;
+
             Box hitBox = candidate.getBoundingBox().expand(candidate.getTargetingMargin());
             Optional<Vec3d> hit = hitBox.raycast(start, end);
             if (hit.isPresent()) {
