@@ -21,17 +21,16 @@ public class GameRendererMixin {
     private void npcclick$findCrosshairTarget(Entity camera, double maxDistance, double someDouble, float tickDelta,
                                                CallbackInfoReturnable<HitResult> cir) {
         if (!NpcClickMod.isEnabled()) return;
-        HitResult current = cir.getReturnValue();
-        if (!(current instanceof EntityHitResult entityHit)) return;
-        if (!(entityHit.getEntity() instanceof PlayerEntity)) return;
-        if (entityHit.getEntity() == camera) return;
+
         World world = camera.getWorld();
         Vec3d start = camera.getCameraPosVec(tickDelta);
         Vec3d look  = camera.getRotationVec(tickDelta);
         Vec3d end   = start.add(look.multiply(maxDistance));
         Box searchBox = camera.getBoundingBox().stretch(look.multiply(maxDistance)).expand(1.5, 1.5, 1.5);
+
         Entity bestEntity = null;
         double bestDist = Double.MAX_VALUE;
+
         for (Entity candidate : world.getOtherEntities(camera, searchBox)) {
             if (candidate instanceof PlayerEntity) continue;
             if (!(candidate instanceof LivingEntity)) continue;
@@ -45,6 +44,7 @@ public class GameRendererMixin {
                 }
             }
         }
+
         if (bestEntity != null) {
             cir.setReturnValue(new EntityHitResult(bestEntity, bestEntity.getBoundingBox().getCenter()));
         }
